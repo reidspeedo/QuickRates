@@ -3,12 +3,9 @@ from chromedriver_py import binary_path
 import pandas as pd
 from time import sleep
 from selenium.webdriver.common.by import By
-import random
 
 path = r"/Users/reidrelatores/PycharmProjects/farmers/chromedriver"
 url = "https://www.nerdwallet.com/article/insurance/estimate-home-insurance"
-
-
 
 def start_chrome(url):
     # Initialize Selenium
@@ -27,7 +24,6 @@ def filter_zips(file, state="Washington"):
     return state_zips
 
 def scrape_process(driver, state, state_zips, wait):
-    input('start?')
     driver.switch_to.frame('iFrameResizer1')
     driver.find_element(By.XPATH, f"//*[@vt='{state}']").click()
     premiums = []
@@ -54,10 +50,11 @@ def scrape_process(driver, state, state_zips, wait):
 
 
 if __name__ == '__main__':
-    state = "Washington"
+    state = "Colorado"
     url = "https://www.nerdwallet.com/article/insurance/estimate-home-insurance"
     uszipcodes = r"/Users/reidrelatores/PycharmProjects/QuickRate/nerdwallet_scraper/uszips.csv"
     driver = start_chrome(url)
     state_zips = filter_zips(uszipcodes)
+    input('Start?')
     zip_df = scrape_process(driver, state, state_zips, 4)
-    zip_df.to_csv('zip_avg_premium.csv', mode='a', header=True, index=False)
+    zip_df.to_csv(f'{state.lower()}_zip_avg_premium.csv', mode='a', header=True, index=False)
