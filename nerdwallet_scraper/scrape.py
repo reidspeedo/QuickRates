@@ -54,7 +54,7 @@ def scrape_process(driver, state, state_zips, wait):
 
 
 if __name__ == '__main__':
-    state = "Washington"
+    state = "Colorado"
     url = "https://www.nerdwallet.com/article/insurance/estimate-home-insurance"
     uszipcodes = r"/Users/reidrelatores/PycharmProjects/QuickRate/nerdwallet_scraper/uszips.csv"
     driver = start_chrome(url)
