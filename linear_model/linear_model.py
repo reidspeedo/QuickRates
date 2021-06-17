@@ -3,6 +3,12 @@ from datetime import date, datetime
 from re import sub
 from decimal import Decimal
 from sklearn import linear_model
+import pymongo
+import os
+
+connection_string = os.environ.get("MONGO_DB_CONN_STR")
+client = pymongo.MongoClient(connection_string)
+db = client.quickrate
 
 def retrieve_state_zips(file, state):
     az = pd.read_csv(file)
@@ -14,8 +20,9 @@ def clean_dob(dob):
     born = datetime.strptime(dob, '%m/%d/%Y').date()
     return today.year - born.year - ((today.month, today.day) < (born.month, born.day))
 
-def clean_zip(zip, avg_prm_for_zip):
-    avg_premium = avg_prm_for_zip.loc[avg_prm_for_zip['zip'] == zip, 'premium'].iloc[0]
+def clean_zip(zip):
+    zip_obj = db.zipcodes.find({'zip': zip})
+    avg_premium = [item['premium'] for item in zip_obj][0]
     value = Decimal(sub(r'[^\d.]', '', avg_premium))
     return value
 
@@ -41,10 +48,10 @@ def clean_deductible(ded):
 def clean_premium(pre):
     return float(pre)
 
-def clean_data(input_df, avg_prm_for_zip):
+def clean_data(input_df):
     output_df = pd.DataFrame()
     #Zip Code Clean Up
-    output_df['zip'] = [clean_zip(zip, avg_prm_for_zip) for zip in input_df['zip']]
+    output_df['zip'] = [clean_zip(zip) for zip in input_df['zip']]
     #DOB clean up
     output_df['dob'] = list(map(clean_dob, input_df['dob']))
     #Gender cleanup
@@ -70,11 +77,11 @@ if __name__ == "__main__":
     state_zip_file = r'/Users/reidrelatores/PycharmProjects/QuickRate/nerdwallet_scraper/zip_avg_premium.csv'
     state = 'Washington'
     avg_prm_for_zip = retrieve_state_zips(state_zip_file, state)
-    c_data = clean_data(nc_data, avg_prm_for_zip)
+    c_data = clean_data(nc_data)
     model = generate_linear_model(c_data)
 
     input_dict = {
-        'zip': clean_zip(98155, avg_prm_for_zip),
+        'zip': clean_zip(98155),
         'dob': clean_dob('1/1/1970'),
         'gender': clean_gender('M'),
         'dwelling': clean_dwelling('270000'),
