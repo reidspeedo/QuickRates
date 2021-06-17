@@ -35,8 +35,7 @@ async def update_prequote(prequote: PreQuote):
 async def delete_prequote(prequote: PreQuote):
     return dict(prequote)
 
-
-#Create linear regression model
+#Update/Create linear regression model
 @app.post("/linear-regression")
 async def update_model(file=r'/Users/reidrelatores/PycharmProjects/QuickRate/linear_model/training_data.csv'):
     id = smd.update_model(file)

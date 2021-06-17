@@ -9,13 +9,18 @@ db = client.quickrate
 
 def update_lr_model(model):
     pickled_model = pickle.dumps(model)
-    id = db.models.insert({'model_name': 'linear-regression',
-                             'created_time': time.time(),
-                             'model': pickled_model})
+    model_name = 'linear-regression'
+    result = db.models.find_one({'model_name': model_name})
+    data = {'model_name': model_name,
+            'last_updated_time': time.time(),
+            'model': pickled_model}
+    if result is None:
+        id = db.models.insert(data)
+    else:
+        id = db.models.update({'model_name': model_name}, data)
     return str(id)
 
 
 def get_lr_model():
-    pickle_obj = db.models.find({'model_name': 'linear-regression'})
-    out_model = [item for item in pickle_obj][0]
-    return pickle.loads(out_model['model'])
+    pickle_obj = db.models.find_one({'model_name': 'linear-regression'})
+    return pickle.loads(pickle_obj['model'])
