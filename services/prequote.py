@@ -1,9 +1,13 @@
-import pandas as pd
 from datetime import date, datetime
 from re import sub
 from repository import zipcodes
 from repository import model as rmd
+from repository import prequote as rpq
 
+
+def get_prequote():
+    response = rpq.get_prequote()
+    return response
 
 def create_prequote(quote_det):
     zip = clean_zip(quote_det['zip'])
@@ -14,9 +18,9 @@ def create_prequote(quote_det):
     data = [[zip, dob, gender, dwelling, deductible]]
 
     linear_reg_model = rmd.get_lr_model()
-    premium_est = linear_reg_model.predict(data)[0]
-    # Add to repository
-    return premium_est
+    quickrate = linear_reg_model.predict(data)[0]
+    id = rpq.create_prequote(quote_det, quickrate)
+    return quickrate
 
 def clean_dob(dob):
     today = date.today()
