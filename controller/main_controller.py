@@ -3,8 +3,21 @@ from pydantic import BaseModel
 import uvicorn
 from services import prequote as cd
 from services import model as smd
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+origins = [
+    "http://localhost:3000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 class PreQuote(BaseModel):
     name: str
@@ -22,8 +35,8 @@ async def get_prequote():
 
 @app.post("/get-quickrate")
 async def create_prequote(prequote: PreQuote):
-    quickrate = cd.create_prequote(dict(prequote))
-    return {'quickrate': quickrate}
+    response = cd.create_prequote(dict(prequote))
+    return response
 
 # #Read new prequote
 # @app.get("/")

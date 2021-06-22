@@ -8,10 +8,11 @@ client = pymongo.MongoClient(connection_string)
 db = client.quickrate
 
 def get_prequote():
-    response = db.prequote()
-    return response
+    cursor = db.prequote.find().sort('_id', -1).limit(10)
+    return cursor
 
 def create_prequote(quote_det, quickrate):
     data = {'quickrate': quickrate, 'quote_details': quote_det, 'created_at': datetime.now()}
     id = db.prequote.insert(data)
-    return str(id)
+    cursor = db.prequote.find({'_id': id}).limit(1)
+    return cursor

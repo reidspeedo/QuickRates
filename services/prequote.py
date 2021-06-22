@@ -4,9 +4,22 @@ from repository import zipcodes
 from repository import model as rmd
 from repository import prequote as rpq
 
+def format_response(doc):
+    response = {}
+    response['amount'] = "${:,.2f}".format(doc['quickrate'])
+    response['id'] = str(doc['_id'])
+    response['name'] = doc['quote_details']['name']
+    response['zip'] = doc['quote_details']['zip']
+    response['dob'] = doc['quote_details']['dob']
+    response['gender'] = doc['quote_details']['gender']
+    response['dwelling'] = doc['quote_details']['dwelling']
+    response['deductible'] = doc['quote_details']['deductible']
+    return response
+
 
 def get_prequote():
-    response = rpq.get_prequote()
+    cursor = rpq.get_prequote()
+    response = list(map(format_response, cursor))
     return response
 
 def create_prequote(quote_det):
@@ -19,8 +32,9 @@ def create_prequote(quote_det):
 
     linear_reg_model = rmd.get_lr_model()
     quickrate = linear_reg_model.predict(data)[0]
-    id = rpq.create_prequote(quote_det, quickrate)
-    return quickrate
+    cursor = rpq.create_prequote(quote_det, quickrate)
+    response = list(map(format_response, cursor))
+    return response
 
 def clean_dob(dob):
     today = date.today()
