@@ -16,6 +16,9 @@ def format_response(doc):
     response['deductible'] = doc['quote_details']['deductible']
     return response
 
+def delete_prequote(id):
+    response = rpq.delete_prequote(id)
+    return response
 
 def get_prequote():
     cursor = rpq.get_prequote()

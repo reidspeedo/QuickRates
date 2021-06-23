@@ -33,25 +33,16 @@ async def get_prequote():
     response = cd.get_prequote()
     return response
 
-@app.post("/get-quickrate")
+@app.post("/quickrate")
 async def create_prequote(prequote: PreQuote):
     response = cd.create_prequote(dict(prequote))
     return response
+#Delete prequote
 
-# #Read new prequote
-# @app.get("/")
-# async def get_prequote(prequote: PreQuote):
-#     return dict(prequote)
-#
-# #Update prequote
-# @app.put("/")
-# async def update_prequote(prequote: PreQuote):
-#     return dict(prequote)
-#
-# #Delete prequote
-# @app.delete("/")
-# async def delete_prequote(prequote: PreQuote):
-#     return dict(prequote)
+@app.delete("/quickrate/{id}")
+async def delete_prequote(id):
+    response = cd.delete_prequote(id)
+    return response.acknowledged
 
 #Update/Create linear regression model
 

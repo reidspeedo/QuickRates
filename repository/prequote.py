@@ -2,6 +2,8 @@ import os
 import pymongo
 import time
 from datetime import datetime
+from bson.objectid import ObjectId
+
 
 connection_string = os.environ.get("MONGO_DB_CONN_STR")
 client = pymongo.MongoClient(connection_string)
@@ -16,3 +18,7 @@ def create_prequote(quote_det, quickrate):
     id = db.prequote.insert(data)
     cursor = db.prequote.find({'_id': id}).limit(1)
     return cursor
+
+def delete_prequote(id):
+    response = db.prequote.delete_one({'_id': ObjectId(id)})
+    return response
