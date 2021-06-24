@@ -9,6 +9,7 @@ app = FastAPI()
 
 origins = [
     "http://localhost:3000",
+    "https://quiet-wave-93259.herokuapp.com/",
 ]
 
 app.add_middleware(
